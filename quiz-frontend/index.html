@@ -8,8 +8,19 @@
   </head>
   <body>
     <h1>Node.js Quiz - AltStack Soft Solutions LLP</h1>
-    <div id="quiz"></div>
-    <button onclick="submitAnswers()">Submit Answers</button>
+    <div id="readyPrompt" class="readyPrompt">
+      <h2>Ready to take the quiz?</h2>
+      <button onclick="startQuiz()">Yes, I'm ready</button>
+      <button onclick="prepareMore()">No, I would like to prepare more!</button>
+    </div>
+    <div id="response" class="response" style="display: none">
+      Take your time to prepare. Click 'Yes, I'm ready' when you are ready to
+      start.
+    </div>
+    <div id="quiz" class="quiz" style="display: none"></div>
+    <button id="submitBtn" onclick="submitAnswers()" style="display: none">
+      Submit Answers
+    </button>
     <footer>Copyright &copy; AltStack Soft Solutions LLP</footer>
     <script>
       async function loadQuestions() {
@@ -19,11 +30,12 @@
             throw new Error('Failed to fetch questions')
           }
           const data = await response.json()
-          //   console.log(data) working
+          console.log(data)
           const quizDiv = document.getElementById('quiz')
           data.forEach((question, index) => {
             quizDiv.innerHTML += `
-                        <h3>${index + 1}. ${question.question}</h3>
+                        <div>
+                            <h3>${index + 1}. ${question.question}</h3>
                         <ul>
                             <li><input type="radio" name="answer${index}" value="A">${
               question.options.A
@@ -38,6 +50,7 @@
               question.options.D
             }</li>
                         </ul>
+                            </div>
                     `
           })
         } catch (error) {
@@ -72,6 +85,19 @@
           console.error(error)
           alert('Failed to submit answers')
         }
+      }
+
+      function startQuiz() {
+        document.getElementById('readyPrompt').style.display = 'none'
+        document.getElementById('quiz').style.display = 'block'
+        document.getElementById('submitBtn').style.display = 'block'
+        document.getElementById('response').style.display = 'none'
+        // Start timer logic
+        // You can implement timer logic here
+      }
+
+      function prepareMore() {
+        document.getElementById('response').style.display = 'block'
       }
 
       loadQuestions()

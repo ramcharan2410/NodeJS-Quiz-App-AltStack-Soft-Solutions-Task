@@ -128,17 +128,45 @@ const quizData = [
     },
     correctAnswer: 'C',
   },
+  {
+    question: 'What is the purpose of the Node.js module.exports?',
+    options: {
+      A: 'To import modules from other files',
+      B: 'To define a new module',
+      C: 'To export functions, objects, or primitive values from a module',
+      D: 'To handle HTTP requests',
+    },
+    correctAnswer: 'C',
+  },
+  {
+    question:
+      'Which npm command is used to install dependencies listed in package.json?',
+    options: {
+      A: 'npm update',
+      B: 'npm install',
+      C: 'npm start',
+      D: 'npm init',
+    },
+    correctAnswer: 'B',
+  },
+  {
+    question: 'What does the Node.js process.argv property contain?',
+    options: {
+      A: 'The arguments passed to the Node.js process',
+      B: 'The list of installed npm packages',
+      C: 'The file paths of all JavaScript files in the current directory',
+      D: 'The environment variables of the Node.js process',
+    },
+    correctAnswer: 'A',
+  },
 ]
-
-// Serve HTML interface
-app.use(express.static('quiz-frontend'))
 
 // Endpoint to get quiz questions
 app.get('/api/questions', (req, res) => {
-  const questionsWithoutAnswers = quizData.map(
+  const questions = quizData.map(
     ({ correctAnswer, ...question }) => question
   )
-  res.json(questionsWithoutAnswers)
+  res.json(questions)
 })
 
 // Endpoint to submit quiz answers
