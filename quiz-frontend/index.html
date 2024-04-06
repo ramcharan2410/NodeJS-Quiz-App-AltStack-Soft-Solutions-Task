@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Node.js Quiz</title>
+    <link rel="stylesheet" href="/quiz-frontend/styles.css" />
+  </head>
+  <body>
+    <h1>Node.js Quiz - AltStack Soft Solutions LLP</h1>
+    <div id="quiz"></div>
+    <button onclick="submitAnswers()">Submit Answers</button>
+    <footer>Copyright &copy; AltStack Soft Solutions LLP</footer>
+    <script>
+      async function loadQuestions() {
+        try {
+          const response = await fetch('http://localhost:3000/api/questions')
+          if (!response.ok) {
+            throw new Error('Failed to fetch questions')
+          }
+          const data = await response.json()
+          //   console.log(data) working
+          const quizDiv = document.getElementById('quiz')
+          data.forEach((question, index) => {
+            quizDiv.innerHTML += `
+                        <h3>${index + 1}. ${question.question}</h3>
+                        <ul>
+                            <li><input type="radio" name="answer${index}" value="A">${
+              question.options.A
+            }</li>
+                            <li><input type="radio" name="answer${index}" value="B">${
+              question.options.B
+            }</li>
+                            <li><input type="radio" name="answer${index}" value="C">${
+              question.options.C
+            }</li>
+                            <li><input type="radio" name="answer${index}" value="D">${
+              question.options.D
+            }</li>
+                        </ul>
+                    `
+          })
+        } catch (error) {
+          console.error(error)
+          alert('Failed to load questions')
+        }
+      }
+
+      async function submitAnswers() {
+        const answers = []
+        const quizDiv = document.getElementById('quiz')
+        for (let i = 0; i < quizDiv.children.length; i++) {
+          const questionDiv = quizDiv.children[i]
+          const selectedOption = questionDiv.querySelector('input:checked')
+          answers.push(selectedOption ? selectedOption.value : '')
+        }
+        console.log(answers)
+        try {
+          const response = await fetch('http://localhost:3000/api/submit', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ answers }),
+          })
+          if (!response.ok) {
+            throw new Error('Failed to submit answers')
+          }
+          const data = await response.json()
+          alert(`Your score: ${data.score}`)
+        } catch (error) {
+          console.error(error)
+          alert('Failed to submit answers')
+        }
+      }
+
+      loadQuestions()
+    </script>
+  </body>
+</html>
