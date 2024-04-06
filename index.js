@@ -1,5 +1,6 @@
 let timerInterval = 0
 
+// To take the Quiz
 const startQuiz = async () => {
   document.getElementById('readyPrompt').style.display = 'none'
   document.getElementById('quiz').style.display = 'block'
@@ -8,9 +9,13 @@ const startQuiz = async () => {
   startTimer()
   await loadQuestions()
 }
+
+// To not take the quiz
 const prepareMore = () => {
   document.getElementById('response').style.display = 'block'
 }
+
+// To start the timer
 const startTimer = () => {
   let startTime = Date.now() // Get the current time when the timer starts
 
@@ -33,19 +38,13 @@ const startTimer = () => {
     document.getElementById('timer').textContent = formattedTime
   }, 1000) // Update every second (1000 milliseconds)
 }
+
+// To stop the timer
 const stopTimer = () => {
   clearInterval(timerInterval) // Stop the timer interval
 }
 
-const clearSelection = (questionIndex) => {
-  const questionDiv = document.getElementById('quiz').children[questionIndex]
-  console.log(questionDiv)
-  const options = questionDiv.querySelectorAll('input[type="radio"]')
-  options.forEach((option) => {
-    option.checked = false
-  })
-}
-
+// To get questions from server
 const loadQuestions = async () => {
   try {
     const response = await fetch('http://localhost:3000/api/questions')
@@ -55,29 +54,39 @@ const loadQuestions = async () => {
     const data = await response.json()
     const quizDiv = document.getElementById('quiz')
     data.forEach((question, index) => {
-      quizDiv.innerHTML += `
-                        <div>
-                            <h3>${index + 1}. ${question.question}</h3>
-                        <ul>
-                            <li><input type="radio" name="answer${
-                              index + 1
-                            }" value="A">${question.options.A}</li>
-                            <li><input type="radio" name="answer${
-                              index + 1
-                            }" value="B">${question.options.B}</li>
-                            <li><input type="radio" name="answer${
-                              index + 1
-                            }" value="C">${question.options.C}</li>
-                            <li><input type="radio" name="answer${
-                              index + 1
-                            }" value="D">${question.options.D}</li>
-                        </ul>
-                        <button
-                        class="clear"
-                        type="button"
-                        onclick="clearSelection(${index + 1})">Clear</button>
-                            </div>
-                    `
+      const questionContainer = document.createElement('div')
+      questionContainer.classList.add('question-container')
+      questionContainer.innerHTML = `
+        <h3>${index + 1}. ${question.question}</h3>
+        <ul>
+          <li>
+            <label>
+              <input type="radio" name="answer${index}" value="A">
+              ${question.options.A}
+            </label>
+          </li>
+          <li>
+            <label>
+              <input type="radio" name="answer${index}" value="B">
+              ${question.options.B}
+            </label>
+          </li>
+          <li>
+            <label>
+              <input type="radio" name="answer${index}" value="C">
+              ${question.options.C}
+            </label>
+          </li>
+          <li>
+            <label>
+              <input type="radio" name="answer${index}" value="D">
+              ${question.options.D}
+            </label>
+          </li>
+        </ul>
+        <div class="result" style="display: none;"></div>
+      `
+      quizDiv.appendChild(questionContainer)
     })
   } catch (error) {
     console.log('Failed to load questions')
@@ -85,20 +94,23 @@ const loadQuestions = async () => {
   }
 }
 
+// To submit the Selected Options to server
 const submitAnswers = async (event) => {
   event.preventDefault()
   stopTimer()
-  const answers = []
+  let answers = []
   const quizDiv = document.getElementById('quiz')
-  //   console.log(quizDiv.children)
   for (let i = 0; i < quizDiv.children.length; i++) {
     const questionDiv = quizDiv.children[i]
     const selectedOption = questionDiv.querySelector('input:checked')
-    answers.push({
-      [`${i + 1}`]: selectedOption ? selectedOption.value : '',
-    })
+    answers.push(selectedOption ? selectedOption.value : '')
   }
-  console.log(answers)
+
+  if (answers.some((answer) => answer === '')) {
+    alert('Please answer all the questions to complete the quiz')
+    return
+  }
+
   try {
     const response = await fetch('http://localhost:3000/api/submit', {
       method: 'POST',
@@ -107,13 +119,58 @@ const submitAnswers = async (event) => {
       },
       body: JSON.stringify({ answers }),
     })
+
     if (!response.ok) {
       throw new Error('Failed to submit answers')
     }
+
     const data = await response.json()
-    alert(`Your score: ${data.score}`)
+    displayResult(data)
   } catch (error) {
     console.error(error)
     console.log('Failed to submit answers')
   }
+}
+
+// To display Correct and Selected Options
+const displayResult = (data) => {
+  const scoreDiv = document.createElement('div')
+  scoreDiv.id = 'score'
+  scoreDiv.innerHTML = `<h2>Your Score: ${data.score}/${data.responseData.length}</h2>`
+  document.body.appendChild(scoreDiv)
+
+  const resultDiv = document.createElement('div')
+  resultDiv.id = 'result'
+  resultDiv.style.display = 'block'
+  document.body.appendChild(resultDiv)
+
+  const quizDiv = document.getElementById('quiz')
+  const questionContainers = quizDiv.querySelectorAll('.question-container')
+
+  data.responseData.forEach((questionData, index) => {
+    const resultContainer = questionContainers[index].querySelector('.result')
+    resultContainer.style.display = 'block'
+    resultContainer.innerHTML = `
+      <p>Your Option: ${questionData.selectedOption}</p>
+      <p>Correct Option: ${questionData.correctOption}</p>
+    `
+  })
+}
+
+// To retake the quiz
+const retakeQuiz = () => {
+  const scoreDiv = document.getElementById('score')
+  if (scoreDiv) {
+    scoreDiv.style.display = 'none'
+  }
+
+  const resultDiv = document.getElementById('result')
+  if (resultDiv) {
+    resultDiv.style.display = 'none'
+  }
+
+  const quizDiv = document.getElementById('quiz')
+  quizDiv.innerHTML = ''
+
+  startQuiz()
 }

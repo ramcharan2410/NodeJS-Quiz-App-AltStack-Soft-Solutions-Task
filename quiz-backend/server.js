@@ -1,9 +1,13 @@
 const express = require('express')
 const cors = require('cors')
+const morgan = require('morgan')
 
 const app = express()
-const PORT = process.env.PORT || 3000
 app.use(cors())
+app.use(morgan(':method :url :status :res[content-length] - :response-time ms'))
+app.use(express.json())
+
+const PORT = process.env.PORT || 3000
 
 const quizData = [
   {
@@ -14,7 +18,7 @@ const quizData = [
       C: 'Mobile app development',
       D: 'Game development',
     },
-    correctAnswer: 'B',
+    correctOption: 'B',
   },
   {
     question:
@@ -25,7 +29,7 @@ const quizData = [
       C: 'path',
       D: 'util',
     },
-    correctAnswer: 'B',
+    correctOption: 'B',
   },
   {
     question: 'What is the event-driven architecture in Node.js based on?',
@@ -35,7 +39,7 @@ const quizData = [
       C: 'Observables',
       D: 'Async/Await',
     },
-    correctAnswer: 'A',
+    correctOption: 'A',
   },
   {
     question: 'Which method is used to include external modules in Node.js?',
@@ -45,7 +49,7 @@ const quizData = [
       C: 'include()',
       D: 'use()',
     },
-    correctAnswer: 'A',
+    correctOption: 'A',
   },
   {
     question: "What is the purpose of the Node.js 'process' object?",
@@ -55,7 +59,7 @@ const quizData = [
       C: 'Managing server-side routing',
       D: 'Providing information about the current Node.js process',
     },
-    correctAnswer: 'D',
+    correctOption: 'D',
   },
   {
     question:
@@ -66,7 +70,7 @@ const quizData = [
       C: 'crash',
       D: 'uncaughtException',
     },
-    correctAnswer: 'A',
+    correctOption: 'A',
   },
   {
     question: "What is the role of the 'util' module in Node.js?",
@@ -76,7 +80,7 @@ const quizData = [
       C: 'Managing HTTP requests',
       D: 'Generating random numbers',
     },
-    correctAnswer: 'A',
+    correctOption: 'A',
   },
   {
     question: 'Which of the following is NOT a core module in Node.js?',
@@ -86,7 +90,7 @@ const quizData = [
       C: 'url',
       D: 'express',
     },
-    correctAnswer: 'D',
+    correctOption: 'D',
   },
   {
     question: 'What is a callback function in Node.js?',
@@ -96,7 +100,7 @@ const quizData = [
       C: 'A function used to handle HTTP requests',
       D: 'A function used to define custom middleware in Express.js',
     },
-    correctAnswer: 'A',
+    correctOption: 'A',
   },
   {
     question: 'What is the Node.js Event Loop?',
@@ -106,7 +110,7 @@ const quizData = [
       C: 'A loop that handles asynchronous operations and events',
       D: 'A loop that runs JavaScript code synchronously',
     },
-    correctAnswer: 'C',
+    correctOption: 'C',
   },
   {
     question: 'Which module in Node.js is used to create web servers?',
@@ -116,7 +120,7 @@ const quizData = [
       C: 'path',
       D: 'os',
     },
-    correctAnswer: 'B',
+    correctOption: 'B',
   },
   {
     question: "What is the purpose of the 'os' module in Node.js?",
@@ -126,7 +130,7 @@ const quizData = [
       C: 'Providing information about the operating system',
       D: 'Parsing and formatting URL strings',
     },
-    correctAnswer: 'C',
+    correctOption: 'C',
   },
   {
     question: 'What is the purpose of the Node.js module.exports?',
@@ -136,7 +140,7 @@ const quizData = [
       C: 'To export functions, objects, or primitive values from a module',
       D: 'To handle HTTP requests',
     },
-    correctAnswer: 'C',
+    correctOption: 'C',
   },
   {
     question:
@@ -147,7 +151,7 @@ const quizData = [
       C: 'npm start',
       D: 'npm init',
     },
-    correctAnswer: 'B',
+    correctOption: 'B',
   },
   {
     question: 'What does the Node.js process.argv property contain?',
@@ -157,7 +161,7 @@ const quizData = [
       C: 'The file paths of all JavaScript files in the current directory',
       D: 'The environment variables of the Node.js process',
     },
-    correctAnswer: 'A',
+    correctOption: 'A',
   },
 ]
 
@@ -176,20 +180,20 @@ app.get('/api/questions', (req, res) => {
 // Endpoint to submit quiz answers
 app.post('/api/submit', (req, res) => {
   const answers = req.body.answers
+
   let score = 0
-  const responseData = answers.map((answer) => {
-    const questionIndex = answer[0] - 1
-    const correctAnswer = quizData[questionIndex].correctAnswer
-    const selectedOption = answer[1]
-    if (selectedOption === correctAnswer) {
+  let responseData = []
+
+  for (let i = 0; i < answers.length; i++) {
+    const questionIndex = i
+    const correctOption = quizData[questionIndex].correctOption
+    const selectedOption = answers[i]
+    if (selectedOption === correctOption) {
       score++
     }
-    return {
-      correctOption: correctAnswer,
-      selectedOption,
-    }
-  })
-  res.json({ score, details: responseData })
+    responseData.push({ selectedOption, correctOption })
+  }
+  res.json({ score, responseData })
 })
 
 app.listen(PORT, () => {

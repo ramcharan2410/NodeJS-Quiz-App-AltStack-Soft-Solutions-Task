@@ -90,18 +90,10 @@ body {
     border-radius: 10px;
     margin-bottom: .5em;
 }
-.quiz div .clear{
-    font-family: inherit;
-    padding: .4em;
-    margin-top: .2em;
-    border-radius: 10px;
-    cursor: pointer;
-}
-.quiz div .clear:hover{
-    background-color: rgba(128, 128, 128, 0.47);
-}
-.quiz div li{
+.quiz div li {
     list-style: none;
+}
+.quiz div li label{
     cursor: pointer;
 }
 .quiz div li input[type="radio"]:checked,
