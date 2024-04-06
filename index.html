@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Node.js Quiz</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <h1>Node.js Quiz - AltStack Soft Solutions LLP</h1>
+    <div id="readyPrompt" class="readyPrompt">
+      <h2>Ready to take the quiz?</h2>
+      <button onclick="startQuiz()" class="yes">Yes, I'm ready 💪</button>
+      <button onclick="prepareMore()" class="no">
+        No, I would like to prepare more! 📚
+      </button>
+    </div>
+    <div id="response" class="response" style="display: none">
+      Take your time to prepare. Click 'Yes, I'm ready' when you are ready to
+      start.
+    </div>
+    <div id="timer" class="timer" style="display: none"></div>
+    <form onsubmit="submitAnswers(event)">
+      <div id="quiz" class="quiz" style="display: none"></div>
+      <button id="submitBtn" class="submitBtn" style="display: none">
+        Submit Answers
+      </button>
+    </form>
+    <div class="footer">Copyright &copy; AltStack Soft Solutions LLP</div>
+
+    <script src="/index.js"></script>
+  </body>
+</html>

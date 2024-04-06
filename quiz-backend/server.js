@@ -3,8 +3,8 @@ const cors = require('cors')
 
 const app = express()
 const PORT = process.env.PORT || 3000
-
 app.use(cors())
+
 const quizData = [
   {
     question: 'What is the main purpose of Node.js?',
@@ -161,25 +161,35 @@ const quizData = [
   },
 ]
 
+// Error handling middleware
+app.use((err, req, res, next) => {
+  console.error(err.stack)
+  res.status(500).send('Something went wrong!')
+})
+
 // Endpoint to get quiz questions
 app.get('/api/questions', (req, res) => {
-  const questions = quizData.map(
-    ({ correctAnswer, ...question }) => question
-  )
+  const questions = quizData.map(({ correctAnswer, ...question }) => question)
   res.json(questions)
 })
 
 // Endpoint to submit quiz answers
 app.post('/api/submit', (req, res) => {
   const answers = req.body.answers
-  const score = quiz.calculateScore(answers)
-  res.json({ score })
-})
-
-// Error handling middleware
-app.use((err, req, res, next) => {
-  console.error(err.stack)
-  res.status(500).send('Something went wrong!')
+  let score = 0
+  const responseData = answers.map((answer) => {
+    const questionIndex = answer[0] - 1
+    const correctAnswer = quizData[questionIndex].correctAnswer
+    const selectedOption = answer[1]
+    if (selectedOption === correctAnswer) {
+      score++
+    }
+    return {
+      correctOption: correctAnswer,
+      selectedOption,
+    }
+  })
+  res.json({ score, details: responseData })
 })
 
 app.listen(PORT, () => {

@@ -53,6 +53,7 @@ h1{
 }
 body {
     font-family: "Poppins", sans-serif;
+    position: relative;
     min-height: 100vh;
 }
 .readyPrompt{
@@ -60,9 +61,7 @@ body {
     flex-direction: column;
     justify-self: center;
     align-items: center;
-}
-.readyPrompt h2{
-
+    margin-top: 5em;
 }
 .readyPrompt button{
     font-family: inherit;
@@ -72,8 +71,16 @@ body {
     border-radius: 10px;
     cursor: pointer;
 }
-.readyPrompt button:hover{
-    opacity: .8;
+.readyPrompt button.yes:hover{
+    background-color: green;
+    color: white;
+}
+.readyPrompt button.no:hover{
+    background-color: orange;
+    color: white;
+}
+.response{
+    text-align: center;
 }
 .quiz div{
     width: 70%;
@@ -83,7 +90,39 @@ body {
     border-radius: 10px;
     margin-bottom: .5em;
 }
-footer{
+.quiz div .clear{
+    font-family: inherit;
+    padding: .4em;
+    margin-top: .2em;
+    border-radius: 10px;
+    cursor: pointer;
+}
+.quiz div .clear:hover{
+    background-color: rgba(128, 128, 128, 0.47);
+}
+.quiz div li{
+    list-style: none;
+    cursor: pointer;
+}
+.quiz div li input[type="radio"]:checked,
+.quiz div li:hover {
+    cursor: pointer;
+    background-color: lightgray;
+}
+.submitBtn{
+    font-family: inherit;
+    margin: 0 auto;
+    padding: .2em;
+    border-radius: 10px;
+    cursor: pointer;
+}
+.submitBtn:hover{
+    background-color: green;
+    color: white;
+}
+.footer{
+    width: 100%;
     font-size: .85rem;
+    position: absolute;
     text-align: center;
 }
