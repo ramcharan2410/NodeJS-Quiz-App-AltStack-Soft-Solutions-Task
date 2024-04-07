@@ -82,7 +82,7 @@ const loadQuestions = async () => {
             </label>
           </li>
         </ul>
-        <div class="result" style="display: none;"></div>
+        <div class="result" id="result" style="display: none;"></div>
       `
       quizDiv.appendChild(questionContainer)
     })
