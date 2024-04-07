@@ -1,42 +1,40 @@
 let timerInterval = 0
 
+// To not take the quiz
+const prepareMore = () => {
+  document.getElementById('response').style.display = 'block'
+}
+
 // To take the Quiz
 const startQuiz = async () => {
   document.getElementById('readyPrompt').style.display = 'none'
   document.getElementById('quiz').style.display = 'block'
   document.getElementById('submitBtn').style.display = 'block'
   document.getElementById('response').style.display = 'none'
+  document.getElementById('timer').style.display = 'block'
   startTimer()
   await loadQuestions()
 }
 
-// To not take the quiz
-const prepareMore = () => {
-  document.getElementById('response').style.display = 'block'
-}
-
 // To start the timer
 const startTimer = () => {
-  let startTime = Date.now() // Get the current time when the timer starts
+  let startTime = Date.now()
 
-  // Update the timer display every second
   timerInterval = setInterval(() => {
-    // Calculate the elapsed time since the timer started
-    let elapsedTime = Math.floor((Date.now() - startTime) / 1000) // Convert milliseconds to seconds
+    let elapsedTime = Math.floor((Date.now() - startTime) / 1000)
 
-    // Calculate hours, minutes, and seconds
     let hours = Math.floor(elapsedTime / 3600)
     let minutes = Math.floor((elapsedTime % 3600) / 60)
     let seconds = elapsedTime % 60
 
-    // Format the time components to ensure leading zeros if needed
     let formattedTime = `${hours.toString().padStart(2, '0')}:${minutes
       .toString()
       .padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
 
-    // Update the content of the timer div
-    document.getElementById('timer').textContent = formattedTime
-  }, 1000) // Update every second (1000 milliseconds)
+    document.getElementById(
+      'timer'
+    ).textContent = `Time Elapsed - ${formattedTime}`
+  }, 1000)
 }
 
 // To stop the timer
@@ -98,6 +96,7 @@ const loadQuestions = async () => {
 const submitAnswers = async (event) => {
   event.preventDefault()
   stopTimer()
+  window.scrollTo({ top: 0, behavior: 'smooth' })
   let answers = []
   const quizDiv = document.getElementById('quiz')
   for (let i = 0; i < quizDiv.children.length; i++) {
@@ -126,6 +125,7 @@ const submitAnswers = async (event) => {
 
     const data = await response.json()
     displayResult(data)
+    document.getElementById('retake').style.display = 'block'
   } catch (error) {
     console.error(error)
     console.log('Failed to submit answers')
@@ -134,10 +134,9 @@ const submitAnswers = async (event) => {
 
 // To display Correct and Selected Options
 const displayResult = (data) => {
-  const scoreDiv = document.createElement('div')
-  scoreDiv.id = 'score'
-  scoreDiv.innerHTML = `<h2>Your Score: ${data.score}/${data.responseData.length}</h2>`
-  document.body.appendChild(scoreDiv)
+  const scoreDiv = document.getElementById('score')
+  scoreDiv.style.display = 'block'
+  scoreDiv.textContent = `Your Score: ${data.score}/${data.responseData.length}`
 
   const resultDiv = document.createElement('div')
   resultDiv.id = 'result'
@@ -158,19 +157,11 @@ const displayResult = (data) => {
 }
 
 // To retake the quiz
-const retakeQuiz = () => {
-  const scoreDiv = document.getElementById('score')
-  if (scoreDiv) {
-    scoreDiv.style.display = 'none'
-  }
-
-  const resultDiv = document.getElementById('result')
-  if (resultDiv) {
-    resultDiv.style.display = 'none'
-  }
-
-  const quizDiv = document.getElementById('quiz')
-  quizDiv.innerHTML = ''
-
-  startQuiz()
+const retakeQuiz = async () => {
+  document.getElementById('timer').style.display = 'none'
+  document.getElementById('score').style.display = 'none'
+  document.getElementById('result').style.display = 'none'
+  document.getElementById('quiz').innerHTML = ''
+  document.getElementById('retake').style.display = 'none'
+  await startQuiz()
 }

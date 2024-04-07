@@ -82,6 +82,27 @@ body {
 .response{
     text-align: center;
 }
+.timer{
+    text-align: center;
+}
+.score{
+    width: 100%;
+    text-align: center;
+    font-family: inherit;
+    font-weight: bold;
+}
+.retake{
+    font-family: inherit;
+    margin: 0 auto;
+    padding: .2em;
+    border-radius: 10px;
+    cursor: pointer;
+    margin-bottom: .2em;
+}
+.retake:hover {
+    background-color: green;
+    color: white;
+}
 .quiz div{
     width: 70%;
     margin: 0 auto;
