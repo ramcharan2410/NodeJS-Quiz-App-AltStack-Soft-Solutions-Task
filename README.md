@@ -12,6 +12,8 @@
 
 ## Brief Description
 
+The NodeJS Quiz App is a web-based application that allows users to take quizzes on various topics related to Node.js. The app is built using Node.js for the backend and vanilla JavaScript for the frontend. The app fetches quiz questions from a server and displays them to the user. Users can select their answers and submit them to the server, which evaluates the responses and provides a score along with the correct and selected options for each question.
+
 ## Deployment
 
 To deploy this project, proceed with the following steps:
@@ -30,7 +32,7 @@ To deploy this project, proceed with the following steps:
 
    `nodemon server.js`
 
-5. Start the Live Server of the HTML in the root directory.
+5. Start the Live Server of the HTML from the root directory.
 
 ## Languages Used
 
@@ -44,7 +46,10 @@ Refer to the below given respective documentations for the languages used to bui
 
 ## Features
 
-- Features
+- User-friendly interface
+- Immediate feedback after submitting answers, displaying the score and correct/selected options
+- Timer functionality to track the time taken to complete the quiz
+- Server-side logic to fetch questions, evaluate responses, and calculate scores
 
 ## Details
 

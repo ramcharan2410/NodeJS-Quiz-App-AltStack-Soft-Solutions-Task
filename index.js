@@ -39,7 +39,7 @@ const startTimer = () => {
 
 // To stop the timer
 const stopTimer = () => {
-  clearInterval(timerInterval) // Stop the timer interval
+  clearInterval(timerInterval)
 }
 
 // To get questions from server
@@ -109,7 +109,7 @@ const submitAnswers = async (event) => {
     alert('Please answer all the questions to complete the quiz')
     return
   }
-
+  // console.log(answers);
   try {
     const response = await fetch('http://localhost:3000/api/submit', {
       method: 'POST',
@@ -126,6 +126,16 @@ const submitAnswers = async (event) => {
     const data = await response.json()
     displayResult(data)
     document.getElementById('retake').style.display = 'block'
+
+    // Disable all radio buttons
+    const radioButtons = quizDiv.querySelectorAll('input[type="radio"]')
+    radioButtons.forEach((radio) => {
+      radio.disabled = true
+    })
+
+    // Hide the "Submit Answers" button
+    const submitBtn = document.getElementById('submitBtn')
+    submitBtn.style.display = 'none'
   } catch (error) {
     console.error(error)
     console.log('Failed to submit answers')
